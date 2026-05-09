@@ -1,0 +1,264 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Theme variables — defaults, overridden by features/themes/themesConfig.ts
+   ──────────────────────────────────────────────────────────────────────── */
+
+:root {
+  color-scheme: dark;
+
+  --bg: #0a0a0f;
+  --bg-soft: #11121a;
+  --bg-card: #161724;
+  --accent: #7c5cff;
+  --accent-glow: #a78bfa;
+  --accent-neon: #22d3ee;
+  --success: #22c55e;
+  --danger: #ef4444;
+  --bg-grad-1: rgba(124, 92, 255, 0.18);
+  --bg-grad-2: rgba(34, 211, 238, 0.12);
+
+  --shadow-soft: rgba(124, 92, 255, 0.35);
+  --shadow-glow: rgba(124, 92, 255, 0.55);
+  --shadow-neon: rgba(34, 211, 238, 0.45);
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, sans-serif;
+  --font-display: "Lexend", "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Safe-area shortcuts. */
+  --sat: env(safe-area-inset-top, 0px);
+  --sab: env(safe-area-inset-bottom, 0px);
+  --sal: env(safe-area-inset-left, 0px);
+  --sar: env(safe-area-inset-right, 0px);
+
+  --text-scale: 1;
+}
+
+/* Text scaling driven by [data-scale]. */
+:root[data-scale="sm"] { --text-scale: 0.92; }
+:root[data-scale="md"] { --text-scale: 1.00; }
+:root[data-scale="lg"] { --text-scale: 1.10; }
+:root[data-scale="xl"] { --text-scale: 1.22; }
+
+html { font-size: calc(16px * var(--text-scale)); }
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg);
+  background-image:
+    radial-gradient(1200px 600px at 50% -10%, var(--bg-grad-1), transparent 60%),
+    radial-gradient(800px 500px at 100% 100%, var(--bg-grad-2), transparent 60%);
+  background-attachment: fixed;
+  -webkit-tap-highlight-color: transparent;
+  overflow-x: hidden;
+  /* Prevents iOS rubber-banding on the body. */
+  overscroll-behavior-y: none;
+}
+
+/* Hide the boot splash once React mounts. */
+#root:not(:empty) ~ #boot-splash {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Accessibility variants
+   ──────────────────────────────────────────────────────────────────────── */
+
+/* Dyslexia-friendly font. */
+:root[data-font="dyslexic"] {
+  --font-sans: "Lexend", "Inter", ui-sans-serif, system-ui, sans-serif;
+}
+
+/* High contrast: stronger borders, denser glass. */
+:root[data-contrast="high"] {
+  --shadow-soft: rgba(255, 255, 255, 0.45);
+  --shadow-glow: rgba(255, 255, 255, 0.55);
+}
+:root[data-contrast="high"] .glass {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.12),
+    rgba(255, 255, 255, 0.06)
+  );
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+/* Colorblind palette adjustments — nudge accent hues. */
+:root[data-cb="deuteranopia"] {
+  --accent: #4c8bff;
+  --accent-glow: #93c5fd;
+  --accent-neon: #fbbf24;
+  --success: #facc15;
+  --danger: #f97316;
+}
+:root[data-cb="protanopia"] {
+  --accent: #60a5fa;
+  --accent-glow: #93c5fd;
+  --accent-neon: #fbbf24;
+  --success: #facc15;
+  --danger: #f59e0b;
+}
+:root[data-cb="tritanopia"] {
+  --accent: #f87171;
+  --accent-glow: #fca5a5;
+  --accent-neon: #34d399;
+  --success: #34d399;
+  --danger: #f87171;
+}
+
+/* Left-handed mode mirrors selected horizontal flex orderings. */
+:root[data-handed="left"] .lh-mirror {
+  flex-direction: row-reverse;
+}
+
+/* Animation kill-switch. */
+.reduce-motion *,
+.reduce-motion *::before,
+.reduce-motion *::after {
+  animation-duration: 0.001ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.001ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* Respect OS-level prefers-reduced-motion automatically. */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Scrollbar polish
+   ──────────────────────────────────────────────────────────────────────── */
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(124, 92, 255, 0.25); border-radius: 8px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(124, 92, 255, 0.45); }
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Animated backdrop (low-cost CSS-only).
+   ──────────────────────────────────────────────────────────────────────── */
+
+.animated-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.6;
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    var(--bg-grad-1) 0deg,
+    var(--bg-grad-2) 120deg,
+    transparent 240deg,
+    var(--bg-grad-1) 360deg
+  );
+  filter: blur(60px) saturate(1.1);
+  animation: backdropDrift 28s linear infinite;
+}
+@keyframes backdropDrift {
+  0%   { transform: translate3d(0,0,0) rotate(0deg) scale(1.05); }
+  50%  { transform: translate3d(2%, -3%, 0) rotate(180deg) scale(1.2); }
+  100% { transform: translate3d(0,0,0) rotate(360deg) scale(1.05); }
+}
+
+/* Particle drift used by ParticleField. */
+@keyframes particleDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1);   opacity: 0.2; }
+  50%  { transform: translate3d(20px, -25px, 0) scale(1.2); opacity: 0.55; }
+  100% { transform: translate3d(-15px, 20px, 0) scale(0.9);  opacity: 0.25; }
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Components
+   ──────────────────────────────────────────────────────────────────────── */
+
+@layer components {
+  .glass {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.04),
+      rgba(255, 255, 255, 0.015)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-2xl px-4 py-2.5
+      font-semibold text-sm select-none transition-all duration-200
+      active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed;
+    /* iOS-safe minimum tap target. */
+    min-height: 44px;
+  }
+
+  .btn-primary {
+    @apply btn text-white shadow-soft hover:shadow-glow hover:-translate-y-0.5;
+    background-image: linear-gradient(135deg, var(--accent), var(--accent-glow));
+  }
+
+  .btn-ghost {
+    @apply btn glass text-white/90 hover:bg-white/[0.06] hover:-translate-y-0.5;
+  }
+
+  .chip {
+    @apply inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs
+      font-medium tracking-wide glass text-white/80;
+  }
+
+  .safe-top {
+    padding-top: max(env(safe-area-inset-top), 12px);
+  }
+  .safe-bottom {
+    padding-bottom: max(env(safe-area-inset-bottom), 12px);
+  }
+
+  .has-bottom-nav {
+    padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 12px));
+  }
+
+  /* Sticky HUD container used during gameplay. */
+  .hud-sticky {
+    position: sticky;
+    top: max(env(safe-area-inset-top), 0px);
+    z-index: 30;
+    background: linear-gradient(180deg, var(--bg) 60%, transparent);
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+}
+
+.no-select { user-select: none; -webkit-user-select: none; }
+
+/* Tile interaction polish. */
+.tile-base {
+  position: relative;
+  overflow: hidden;
+}
+.tile-base::after {
+  /* Tap ripple base; toggled with .ripple-active. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.45), transparent 60%);
+  opacity: 0;
+  transform: scale(0.4);
+  pointer-events: none;
+}
+.tile-base.ripple-active::after {
+  animation: ripple 0.55s ease-out 1;
+}
