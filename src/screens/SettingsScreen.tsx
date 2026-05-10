@@ -104,10 +104,7 @@ export function SettingsScreen() {
   };
 
   return (
-    <main
-      className="w-full max-w-3xl mx-auto px-4 py-6 sm:py-8 flex flex-col gap-5 has-bottom-nav animate-fade-in"
-      style={{ paddingTop: "max(env(safe-area-inset-top), 16px)" }}
-    >
+    <main className="w-full max-w-3xl mx-auto px-4 pb-6 sm:pb-8 flex flex-col gap-5 has-bottom-nav has-top-safe animate-fade-in">
       <header>
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
           {t("settings.title")}

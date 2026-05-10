@@ -431,12 +431,7 @@ export function GameScreen({
   const shakeKey = shakeTick;
 
   return (
-    <main
-      className="w-full max-w-5xl mx-auto px-4 py-4 sm:py-6 flex flex-col gap-4 sm:gap-5 has-bottom-nav animate-fade-in"
-      style={{
-        paddingTop: "max(env(safe-area-inset-top), 8px)",
-      }}
-    >
+    <main className="w-full max-w-5xl mx-auto px-4 pb-4 sm:pb-6 flex flex-col gap-4 sm:gap-5 has-bottom-nav has-top-safe animate-fade-in">
       <div className="hud-sticky flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <button

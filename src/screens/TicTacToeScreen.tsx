@@ -196,10 +196,7 @@ export function TicTacToeScreen({ onExit }: TicTacToeScreenProps) {
             : t("tictactoe.ai_turn");
 
   return (
-    <main
-      className="w-full max-w-2xl mx-auto px-4 py-5 sm:py-8 flex flex-col gap-5 has-bottom-nav animate-fade-in"
-      style={{ paddingTop: "max(env(safe-area-inset-top), 16px)" }}
-    >
+    <main className="w-full max-w-2xl mx-auto px-4 pb-5 sm:pb-8 flex flex-col gap-5 has-bottom-nav has-top-safe animate-fade-in">
       <header className="flex items-center gap-3">
         <button
           type="button"

@@ -87,9 +87,24 @@ export function BottomNav({ screen, onNavigate }: BottomNavProps) {
     if (!el) return;
     const root = document.documentElement;
     const update = () => {
-      root.style.setProperty("--bottom-nav-height", `${el.offsetHeight}px`);
+      // getBoundingClientRect() returns fractional pixels and does not
+      // round down the way offsetHeight does, so the measurement is
+      // never *under* the actual rendered height.
+      const h = Math.ceil(el.getBoundingClientRect().height);
+      if (h > 0) {
+        root.style.setProperty("--bottom-nav-height", `${h}px`);
+      }
     };
     update();
+    // Run again on the next two animation frames to catch any layout
+    // settling (font loading, dynamic safe-area updates on iOS Safari,
+    // late-loading icons, etc.).
+    let raf1 = 0;
+    let raf2 = 0;
+    raf1 = requestAnimationFrame(() => {
+      update();
+      raf2 = requestAnimationFrame(update);
+    });
 
     const ro =
       typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
@@ -99,6 +114,8 @@ export function BottomNav({ screen, onNavigate }: BottomNavProps) {
     window.addEventListener("orientationchange", update);
 
     return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
       ro?.disconnect();
       window.removeEventListener("resize", update);
       window.removeEventListener("orientationchange", update);

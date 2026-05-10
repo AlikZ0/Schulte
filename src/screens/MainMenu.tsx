@@ -25,10 +25,7 @@ export function MainMenu({ onNavigate, onPlay }: MainMenuProps) {
   const score = focusScore(progress.sessions);
 
   return (
-    <main
-      className="w-full max-w-3xl mx-auto px-4 py-5 sm:py-8 flex flex-col gap-5 has-bottom-nav animate-fade-in"
-      style={{ paddingTop: "max(env(safe-area-inset-top), 16px)" }}
-    >
+    <main className="w-full max-w-3xl mx-auto px-4 pb-5 sm:pb-8 flex flex-col gap-5 has-bottom-nav has-top-safe animate-fade-in">
       {/* Hero card */}
       <section className="glass rounded-3xl p-5 sm:p-7 shadow-soft">
         <div className="flex items-center gap-4">

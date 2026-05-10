@@ -35,6 +35,13 @@
   --sar: env(safe-area-inset-right, 0px);
 
   --text-scale: 1;
+
+  /*
+   * Real bottom-nav height is written from BottomNav.tsx. Default is set
+   * here so .has-bottom-nav has a sensible value even before React boots
+   * (e.g. during the boot splash or for screens loaded via Suspense).
+   */
+  --bottom-nav-height: calc(96px + env(safe-area-inset-bottom, 0px));
 }
 
 /* Text scaling driven by [data-scale]. */
@@ -228,22 +235,43 @@ body {
   }
 
   /*
+   * Use this class on every screen's top-level <main>. It keeps the page
+   * title and first card from sliding under the device status bar / Dynamic
+   * Island / browser URL bar — even on Android Chrome where
+   * env(safe-area-inset-top) often reports 0. The 44 px floor is enough
+   * to fully clear typical mobile status bars (24–44 px) and matches the
+   * iOS-safe minimum tap target so the layout feels right even when the
+   * page is launched as a PWA without a top header.
+   */
+  .has-top-safe {
+    padding-top: max(env(safe-area-inset-top), 44px);
+  }
+
+  /*
    * The fixed bottom nav measures itself in JS (BottomNav.tsx) and writes
    * its real, layout-correct height to --bottom-nav-height on <html>.
    * Every screen consumes that variable so the last card is always fully
-   * scrollable — even on iPhones with a home-indicator bar, on devices
-   * with notches, or with accessibility text scaling turned up.
-   * The fallback (140 px) is intentionally generous so the page is still
-   * usable for the brief moment before the JS measurement runs.
+   * scrollable above the nav — on iPhones with a home-indicator bar, on
+   * Android phones with gesture nav, in browsers with mobile emulation,
+   * and with accessibility text scaling turned up.
+   *
+   * We add a +40 px buffer so the last card visually clears the nav with
+   * comfortable breathing room rather than touching its top edge, AND we
+   * take max() with a static safety floor so even if something blocks
+   * the JS measurement we never under-pad.
    */
   .has-bottom-nav {
-    padding-bottom: calc(var(--bottom-nav-height, 140px) + 24px);
+    padding-bottom: max(
+      calc(var(--bottom-nav-height) + 40px),
+      calc(150px + env(safe-area-inset-bottom, 0px))
+    );
   }
 
   /* Sticky HUD container used during gameplay. */
   .hud-sticky {
     position: sticky;
-    top: max(env(safe-area-inset-top), 0px);
+    /* Match .has-top-safe so the HUD never slips under the status bar. */
+    top: max(env(safe-area-inset-top), 44px);
     z-index: 30;
     background: linear-gradient(180deg, var(--bg) 60%, transparent);
     padding-top: 8px;

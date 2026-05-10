@@ -12,9 +12,9 @@ export interface ModeMeta {
 
 export const MODES: ModeMeta[] = [
   { id: "campaign",  nameKey: "mode.campaign",  descriptionKey: "mode.campaign.desc",  icon: "🎯", unlockLevel: 1 },
+  { id: "trail",     nameKey: "mode.trail",     descriptionKey: "mode.trail.desc",     icon: "✨", unlockLevel: 1 },
   { id: "daily",     nameKey: "mode.daily",     descriptionKey: "mode.daily.desc",     icon: "☀",  unlockLevel: 1 },
   { id: "zen",       nameKey: "mode.zen",       descriptionKey: "mode.zen.desc",       icon: "🧘", unlockLevel: 5 },
-  { id: "trail",     nameKey: "mode.trail",     descriptionKey: "mode.trail.desc",     icon: "✨", unlockLevel: 10 },
   { id: "speedrun",  nameKey: "mode.speedrun",  descriptionKey: "mode.speedrun.desc",  icon: "⚡", unlockLevel: 15 },
   { id: "nightmare", nameKey: "mode.nightmare", descriptionKey: "mode.nightmare.desc", icon: "💀", unlockLevel: 75 },
 ];

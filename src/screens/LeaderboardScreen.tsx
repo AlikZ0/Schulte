@@ -20,7 +20,7 @@ export function LeaderboardScreen() {
   }, [progress.leaderboard, filterMode]);
 
   return (
-    <main className="w-full max-w-3xl mx-auto px-4 py-6 sm:py-8 flex flex-col gap-5 has-bottom-nav animate-fade-in">
+    <main className="w-full max-w-3xl mx-auto px-4 pb-6 sm:pb-8 flex flex-col gap-5 has-bottom-nav has-top-safe animate-fade-in">
       <header>
         <h1 className="text-2xl font-bold tracking-tight">{t("leaderboard.title")}</h1>
         <p className="text-sm text-white/55 mt-1">{t("leaderboard.subtitle")}</p>
