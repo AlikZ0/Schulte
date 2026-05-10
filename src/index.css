@@ -228,13 +228,16 @@ body {
   }
 
   /*
-   * The fixed bottom nav (BottomNav.tsx) is roughly 64–72 px tall plus the
-   * safe-area inset. Reserve enough room so the last card on every page
-   * (e.g. Settings → Danger zone, Profile → Prestige) is fully scrollable
-   * above the nav even on devices with a home-indicator bar.
+   * The fixed bottom nav measures itself in JS (BottomNav.tsx) and writes
+   * its real, layout-correct height to --bottom-nav-height on <html>.
+   * Every screen consumes that variable so the last card is always fully
+   * scrollable — even on iPhones with a home-indicator bar, on devices
+   * with notches, or with accessibility text scaling turned up.
+   * The fallback (140 px) is intentionally generous so the page is still
+   * usable for the brief moment before the JS measurement runs.
    */
   .has-bottom-nav {
-    padding-bottom: calc(96px + max(env(safe-area-inset-bottom), 12px));
+    padding-bottom: calc(var(--bottom-nav-height, 140px) + 24px);
   }
 
   /* Sticky HUD container used during gameplay. */

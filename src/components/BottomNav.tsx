@@ -1,3 +1,5 @@
+import { useLayoutEffect, useRef } from "react";
+
 import type { Screen } from "../types";
 import { useSettings } from "../store/SettingsContext";
 
@@ -70,8 +72,46 @@ const TABS: Tab[] = [
 
 export function BottomNav({ screen, onNavigate }: BottomNavProps) {
   const { t } = useSettings();
+  const navRef = useRef<HTMLElement | null>(null);
+
+  /*
+   * Measure the actual rendered height of the nav (including safe-area
+   * inset, font scaling, dynamic content) and expose it as a CSS variable
+   * --bottom-nav-height on <html>. The .has-bottom-nav utility consumes
+   * that variable so every screen always reserves the exact right amount
+   * of bottom padding — even on phones with a home-indicator bar or
+   * accessibility text scaling turned up.
+   */
+  useLayoutEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+    const root = document.documentElement;
+    const update = () => {
+      root.style.setProperty("--bottom-nav-height", `${el.offsetHeight}px`);
+    };
+    update();
+
+    const ro =
+      typeof ResizeObserver !== "undefined" ? new ResizeObserver(update) : null;
+    ro?.observe(el);
+
+    window.addEventListener("resize", update);
+    window.addEventListener("orientationchange", update);
+
+    return () => {
+      ro?.disconnect();
+      window.removeEventListener("resize", update);
+      window.removeEventListener("orientationchange", update);
+      // We deliberately keep --bottom-nav-height on <html> across nav
+      // mount/unmount cycles. The GameScreen also uses .has-bottom-nav
+      // and benefits from the last known measurement; otherwise it
+      // would briefly snap to the fallback during the transition.
+    };
+  }, []);
+
   return (
     <nav
+      ref={navRef}
       className="fixed left-0 right-0 bottom-0 z-40 lh-mirror"
       style={{
         paddingBottom: "max(env(safe-area-inset-bottom), 12px)",
