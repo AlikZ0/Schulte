@@ -11,6 +11,7 @@ export default {
   "menu.profile": "Profile",
   "menu.quests": "Quests",
   "menu.leaderboard": "Leaderboard",
+  "menu.tictactoe": "Tic-Tac-Toe",
   "menu.tagline":
     "Sharpen your peripheral vision and reaction speed across 100 progressively harder levels.",
   "menu.recommended": "Recommended for you",
@@ -187,6 +188,7 @@ export default {
   "modifier.LIMITED_LIVES": "Limited lives",
   "modifier.PARTIAL_INVIS": "Partial invisibility",
   "modifier.FAKE_NUMBERS": "Fake numbers",
+  "modifier.TRAIL": "Echo trail",
 
   "daily.title": "Daily Challenge",
   "daily.desc": "A unique board, refreshed every day.",
@@ -204,6 +206,9 @@ export default {
   "mode.speedrun.desc": "Tightest target time, no penalties.",
   "mode.nightmare": "Nightmare",
   "mode.nightmare.desc": "Every modifier, only one life.",
+  "mode.trail": "Echo",
+  "mode.trail.desc":
+    "After every press, your last few finds keep shimmering — a glowing trail shows where you left off.",
 
   "profile.title": "Profile",
   "profile.name": "Name",
@@ -272,6 +277,21 @@ export default {
   "promo.success": "Code redeemed!",
   "promo.unknown": "Unknown code.",
   "promo.already": "You've already used this code.",
+
+  "tictactoe.title": "Tic-Tac-Toe",
+  "tictactoe.subtitle": "Quick break: play X vs O against the AI.",
+  "tictactoe.you": "You",
+  "tictactoe.ai": "AI",
+  "tictactoe.draw_short": "Draw",
+  "tictactoe.your_turn": "Your turn",
+  "tictactoe.ai_turn": "AI is thinking…",
+  "tictactoe.you_win": "You win!",
+  "tictactoe.you_lose": "You lose.",
+  "tictactoe.draw": "It's a draw.",
+  "tictactoe.new_round": "New round",
+  "tictactoe.play_again": "Play again",
+  "tictactoe.reset_scores": "Reset score",
+  "tictactoe.tip": "You play X. The AI plays optimally — a tie is a great result.",
 } as const;
 
 export type TranslationKey = keyof typeof import("./en").default;

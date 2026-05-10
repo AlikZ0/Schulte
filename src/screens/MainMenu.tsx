@@ -124,8 +124,8 @@ export function MainMenu({ onNavigate, onPlay }: MainMenuProps) {
         </div>
       </section>
 
-      {/* Daily / Quests / Leaderboard quick cards */}
-      <section className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* Daily / Quests / Leaderboard / Tic-Tac-Toe quick cards */}
+      <section className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <button
           type="button"
           onClick={() => onPlay(1, "daily")}
@@ -184,6 +184,24 @@ export function MainMenu({ onNavigate, onPlay }: MainMenuProps) {
               <div className="font-bold">{t("menu.leaderboard")}</div>
               <div className="text-xs text-white/55">
                 {progress.leaderboard.length} runs
+              </div>
+            </div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNavigate("tictactoe")}
+          className="glass rounded-2xl p-4 text-left hover:-translate-y-0.5 hover:shadow-glow transition-all"
+        >
+          <div className="flex items-center gap-3">
+            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-fuchsia-400 to-pink-500 grid place-items-center text-bg font-bold shadow-soft">
+              ✕
+            </div>
+            <div className="flex-1">
+              <div className="font-bold">{t("menu.tictactoe")}</div>
+              <div className="text-xs text-white/55">
+                {t("tictactoe.subtitle")}
               </div>
             </div>
           </div>

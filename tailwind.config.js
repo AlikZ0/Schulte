@@ -50,6 +50,7 @@ export default {
         "tile-fade": "tileFade 4.1s ease-in 0.6s both",
         "tile-blink": "tileBlink 0.45s ease-in-out 1",
         "tile-jitter": "tileJitter 1.6s ease-in-out infinite",
+        "tile-shimmer": "tileShimmer 1.8s ease-in-out infinite",
         "ripple": "ripple 0.55s ease-out both",
         "confetti": "confettiFall 1.2s cubic-bezier(.25,1,.5,1) forwards",
       },
@@ -104,6 +105,10 @@ export default {
           "25%": { transform: "translate(2px, -1px)" },
           "50%": { transform: "translate(-2px, 1px)" },
           "75%": { transform: "translate(1px, 2px)" },
+        },
+        tileShimmer: {
+          "0%,100%": { filter: "brightness(1.05)", letterSpacing: "0em" },
+          "50%": { filter: "brightness(1.55)", letterSpacing: "0.04em" },
         },
         ripple: {
           "0%": { transform: "scale(0.4)", opacity: "0.45" },

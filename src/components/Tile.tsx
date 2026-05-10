@@ -13,6 +13,13 @@ export interface TileVisual {
   hue: number;
   /** Counter-rotation degrees applied to the number to keep it upright. */
   counterRotation: number;
+  /**
+   * 0..1 — when > 0 (TRAIL mode), the just-found tile keeps showing its
+   * number with a shimmering glow that gradually fades out as more
+   * tiles are tapped. 1 = brightest (most recent), values < 1 = older
+   * trail entries fading out.
+   */
+  trail?: number;
 }
 
 interface TileProps {
@@ -45,6 +52,9 @@ function TileComponent({
 }: TileProps) {
   const ref = useRef<HTMLButtonElement | null>(null);
 
+  const trailLevel = visual.trail ?? 0;
+  const isTrail = trailLevel > 0;
+
   const stateClasses = isFound
     ? "bg-gradient-to-br from-accent-success/30 to-accent-success/10 text-accent-success border-accent-success/30 shadow-[0_0_24px_rgba(34,197,94,0.25)] animate-scale-pop"
     : isWrong
@@ -55,6 +65,10 @@ function TileComponent({
   const fade = visual.fade && !isFound ? "animate-tile-fade" : "";
   const jitter = visual.jitter ? "animate-tile-jitter" : "";
   const blink = visual.blink ? "animate-tile-blink" : "";
+  // The trail tile keeps showing the number while gently shimmering. We pick
+  // up the existing tileBlink keyframe for the inner number so it pulses
+  // brightness without fighting the green "found" background.
+  const showNumber = isTrail ? true : !visual.hidden;
 
   const handleClick = () => {
     // Trigger ripple animation by toggling the class.
@@ -93,12 +107,21 @@ function TileComponent({
       }}
     >
       <span
+        className={isTrail ? "animate-tile-shimmer" : ""}
         style={{
-          opacity: visual.hidden ? 0 : 1,
+          opacity: showNumber
+            ? isTrail
+              // Older entries in the trail are dimmer than fresh ones.
+              ? 0.55 + 0.45 * trailLevel
+              : 1
+            : 0,
+          textShadow: isTrail
+            ? `0 0 ${6 + trailLevel * 14}px rgba(34, 211, 238, ${0.4 + trailLevel * 0.4})`
+            : undefined,
           transform: visual.counterRotation
             ? `rotate(${visual.counterRotation}deg)`
             : undefined,
-          transition: "opacity 220ms ease-out, transform 600ms ease-out",
+          transition: "opacity 220ms ease-out, transform 600ms ease-out, text-shadow 320ms ease-out",
           display: "inline-block",
         }}
       >

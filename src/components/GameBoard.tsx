@@ -13,6 +13,12 @@ interface GameBoardProps {
   hintOverride?: boolean;
   disabled: boolean;
   onTileClick: (value: number) => void;
+  /**
+   * Most recent N found values, ordered newest-first. Drives the TRAIL
+   * modifier — each tile in the array gets a shimmering number whose
+   * brightness fades with distance from the head.
+   */
+  trail?: number[];
 }
 
 const HAS = (mods: Modifier[], m: Modifier) => mods.includes(m);
@@ -28,9 +34,23 @@ export function GameBoard({
   hintOverride = false,
   disabled,
   onTileClick,
+  trail,
 }: GameBoardProps) {
   const { size, modifiers } = config;
   const total = numbers.length;
+  const trailOn = HAS(modifiers, "TRAIL");
+  const trailMap = useMemo(() => {
+    if (!trailOn || !trail || trail.length === 0) return null;
+    const m = new Map<number, number>();
+    // First entry = brightest. Entries fade roughly linearly down to ~0.25.
+    const len = trail.length;
+    for (let i = 0; i < len; i++) {
+      const v = trail[i];
+      const level = 1 - i / Math.max(1, len);
+      m.set(v, Math.max(0.25, level));
+    }
+    return m;
+  }, [trail, trailOn]);
 
   // Compute static per-tile decorators (hue, partial-invis assignment) once
   // per board so we don't churn on parent re-renders.
@@ -130,6 +150,7 @@ export function GameBoard({
             blink: blinkSet.has(n),
             hue: seed.hue,
             counterRotation: -boardRotation,
+            trail: trailMap?.get(n) ?? 0,
           };
 
           return (

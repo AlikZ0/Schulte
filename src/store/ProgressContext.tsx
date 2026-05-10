@@ -174,7 +174,7 @@ function validate(raw: unknown): ProgressData {
         .filter((s): s is SessionEntry => !!s && typeof s === "object")
         .map((s) => ({
           ts: clampNumber(s.ts, 0, Number.MAX_SAFE_INTEGER, 0),
-          mode: ["campaign", "daily", "zen", "speedrun", "nightmare"].includes(s.mode as string)
+          mode: ["campaign", "daily", "zen", "speedrun", "nightmare", "trail"].includes(s.mode as string)
             ? s.mode
             : "campaign",
           level: clampInt(s.level, 1, TOTAL_LEVELS, 1),
@@ -242,7 +242,7 @@ function validate(raw: unknown): ProgressData {
         .map((e) => ({
           ts: clampNumber(e.ts, 0, Number.MAX_SAFE_INTEGER, 0),
           level: clampInt(e.level, 1, TOTAL_LEVELS, 1),
-          mode: ["campaign", "daily", "zen", "speedrun", "nightmare"].includes(e.mode as string)
+          mode: ["campaign", "daily", "zen", "speedrun", "nightmare", "trail"].includes(e.mode as string)
             ? e.mode
             : "campaign",
           timeMs: clampNumber(e.timeMs, 0, 1e7, 0),

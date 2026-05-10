@@ -13,6 +13,7 @@ const es: Record<keyof typeof en, string> = {
   "menu.profile": "Perfil",
   "menu.quests": "Misiones",
   "menu.leaderboard": "Clasificación",
+  "menu.tictactoe": "Tres en raya",
   "menu.tagline":
     "Agudiza tu visión periférica y tu reacción a través de 100 niveles cada vez más exigentes.",
   "menu.recommended": "Recomendado para ti",
@@ -189,6 +190,7 @@ const es: Record<keyof typeof en, string> = {
   "modifier.LIMITED_LIVES": "Vidas limitadas",
   "modifier.PARTIAL_INVIS": "Invisibilidad parcial",
   "modifier.FAKE_NUMBERS": "Números falsos",
+  "modifier.TRAIL": "Estela",
 
   "daily.title": "Reto diario",
   "daily.desc": "Un tablero único, renovado cada día.",
@@ -206,6 +208,9 @@ const es: Record<keyof typeof en, string> = {
   "mode.speedrun.desc": "Tiempo objetivo más estricto.",
   "mode.nightmare": "Pesadilla",
   "mode.nightmare.desc": "Todos los modificadores, una sola vida.",
+  "mode.trail": "Eco",
+  "mode.trail.desc":
+    "Tras cada acierto, los últimos números encontrados parpadean — una estela brillante muestra dónde te quedaste.",
 
   "profile.title": "Perfil",
   "profile.name": "Nombre",
@@ -274,6 +279,21 @@ const es: Record<keyof typeof en, string> = {
   "promo.success": "¡Código canjeado!",
   "promo.unknown": "Código desconocido.",
   "promo.already": "Ya has usado este código.",
+
+  "tictactoe.title": "Tres en raya",
+  "tictactoe.subtitle": "Descanso rápido: juega ✕ contra ◯ con la IA.",
+  "tictactoe.you": "Tú",
+  "tictactoe.ai": "IA",
+  "tictactoe.draw_short": "Empates",
+  "tictactoe.your_turn": "Tu turno",
+  "tictactoe.ai_turn": "La IA piensa…",
+  "tictactoe.you_win": "¡Ganaste!",
+  "tictactoe.you_lose": "Perdiste.",
+  "tictactoe.draw": "Empate.",
+  "tictactoe.new_round": "Nueva ronda",
+  "tictactoe.play_again": "Jugar otra",
+  "tictactoe.reset_scores": "Reiniciar marcador",
+  "tictactoe.tip": "Tú llevas la ✕. La IA juega óptimo — un empate ya es un gran resultado.",
 };
 
 export default es;

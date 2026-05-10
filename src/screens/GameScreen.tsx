@@ -86,6 +86,12 @@ export function GameScreen({
   const [memorizing, setMemorizing] = useState(false);
   const [resultModal, setResultModal] = useState<RunResult | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  /**
+   * TRAIL modifier — keeps the most recent few correct presses visible
+   * with a shimmering number so the player can quickly see where they
+   * left off after looking around the board.
+   */
+  const [trail, setTrail] = useState<number[]>([]);
 
   const lastClickRef = useRef<number>(0);
   const reactionsRef = useRef<number[]>([]);
@@ -104,6 +110,8 @@ export function GameScreen({
   const hintsAlwaysOn = settings.difficultyAssist;
   const hasMemorize = config.modifiers.includes("MEMORIZE");
   const hasLives = config.modifiers.includes("LIMITED_LIVES");
+  const hasTrail = config.modifiers.includes("TRAIL");
+  const TRAIL_LEN = 5;
 
   // Drive music intensity (0..1) from current combo for the parent.
   useEffect(() => {
@@ -136,6 +144,7 @@ export function GameScreen({
     setMistakes(0);
     setCombo(0);
     setComboMax(0);
+    setTrail([]);
     reactionsRef.current = [];
     mistakeIndicesRef.current = [];
     lastClickRef.current = 0;
@@ -299,6 +308,10 @@ export function GameScreen({
         nextFound.add(value);
         setFound(nextFound);
 
+        if (hasTrail) {
+          setTrail((prev) => [value, ...prev.filter((v) => v !== value)].slice(0, TRAIL_LEN));
+        }
+
         const newCombo = combo + 1;
         setCombo(newCombo);
         if (newCombo > comboMax) setComboMax(newCombo);
@@ -366,6 +379,7 @@ export function GameScreen({
       livesLeft,
       hasLives,
       hasMemorize,
+      hasTrail,
       config.penaltyMs,
       play,
       haptic,
@@ -483,6 +497,7 @@ export function GameScreen({
             hintOverride={hintsAlwaysOn}
             disabled={status !== "running"}
             onTileClick={handleTileClick}
+            trail={hasTrail ? trail : undefined}
           />
         </div>
         {memorizing && (

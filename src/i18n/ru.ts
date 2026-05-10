@@ -13,6 +13,7 @@ const ru: Record<keyof typeof en, string> = {
   "menu.profile": "Профиль",
   "menu.quests": "Квесты",
   "menu.leaderboard": "Таблица лидеров",
+  "menu.tictactoe": "Крестики-нолики",
   "menu.tagline":
     "Тренируй периферическое зрение и скорость реакции на 100 уровнях возрастающей сложности.",
   "menu.recommended": "Рекомендуем тебе",
@@ -189,6 +190,7 @@ const ru: Record<keyof typeof en, string> = {
   "modifier.LIMITED_LIVES": "Ограничены жизни",
   "modifier.PARTIAL_INVIS": "Частичная невидимость",
   "modifier.FAKE_NUMBERS": "Ложные числа",
+  "modifier.TRAIL": "След",
 
   "daily.title": "Ежедневный вызов",
   "daily.desc": "Уникальное поле, обновляется каждый день.",
@@ -206,6 +208,9 @@ const ru: Record<keyof typeof en, string> = {
   "mode.speedrun.desc": "Жёсткое целевое время, без штрафов.",
   "mode.nightmare": "Кошмар",
   "mode.nightmare.desc": "Все модификаторы и одна жизнь.",
+  "mode.trail": "Эхо",
+  "mode.trail.desc":
+    "После каждого нажатия последние найденные цифры мерцают — светящийся след показывает, где ты остановился.",
 
   "profile.title": "Профиль",
   "profile.name": "Имя",
@@ -274,6 +279,21 @@ const ru: Record<keyof typeof en, string> = {
   "promo.success": "Код активирован!",
   "promo.unknown": "Неизвестный код.",
   "promo.already": "Этот код уже использован.",
+
+  "tictactoe.title": "Крестики-нолики",
+  "tictactoe.subtitle": "Передышка: сыграй ✕ против ◯ с компьютером.",
+  "tictactoe.you": "Ты",
+  "tictactoe.ai": "Бот",
+  "tictactoe.draw_short": "Ничьи",
+  "tictactoe.your_turn": "Твой ход",
+  "tictactoe.ai_turn": "Бот думает…",
+  "tictactoe.you_win": "Победа!",
+  "tictactoe.you_lose": "Ты проиграл.",
+  "tictactoe.draw": "Ничья.",
+  "tictactoe.new_round": "Новый раунд",
+  "tictactoe.play_again": "Сыграть снова",
+  "tictactoe.reset_scores": "Сбросить счёт",
+  "tictactoe.tip": "Ты играешь ✕. Бот играет идеально — ничья уже отличный результат.",
 };
 
 export default ru;

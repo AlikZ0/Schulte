@@ -31,6 +31,7 @@ const SettingsScreen = lazy(() => import("./screens/SettingsScreen").then((m) =>
 const ProfileScreen = lazy(() => import("./screens/ProfileScreen").then((m) => ({ default: m.ProfileScreen })));
 const QuestsScreen = lazy(() => import("./screens/QuestsScreen").then((m) => ({ default: m.QuestsScreen })));
 const LeaderboardScreen = lazy(() => import("./screens/LeaderboardScreen").then((m) => ({ default: m.LeaderboardScreen })));
+const TicTacToeScreen = lazy(() => import("./screens/TicTacToeScreen").then((m) => ({ default: m.TicTacToeScreen })));
 
 /* ──────────────────────────────────────────────────────────────────────────
    Inner shell — uses the contexts.
@@ -43,6 +44,7 @@ const SCREEN_ORDER: Screen[] = [
   "leaderboard",
   "stats",
   "achievements",
+  "tictactoe",
   "profile",
   "settings",
 ];
@@ -159,6 +161,7 @@ function AppShell() {
         {screen === "profile" && <ProfileScreen />}
         {screen === "quests" && <QuestsScreen />}
         {screen === "leaderboard" && <LeaderboardScreen />}
+        {screen === "tictactoe" && <TicTacToeScreen onExit={() => navigate("menu")} />}
       </Suspense>
 
       <AchievementToast toasts={toasts} onDismiss={dismiss} />

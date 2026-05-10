@@ -227,8 +227,14 @@ body {
     padding-bottom: max(env(safe-area-inset-bottom), 12px);
   }
 
+  /*
+   * The fixed bottom nav (BottomNav.tsx) is roughly 64–72 px tall plus the
+   * safe-area inset. Reserve enough room so the last card on every page
+   * (e.g. Settings → Danger zone, Profile → Prestige) is fully scrollable
+   * above the nav even on devices with a home-indicator bar.
+   */
   .has-bottom-nav {
-    padding-bottom: calc(72px + max(env(safe-area-inset-bottom), 12px));
+    padding-bottom: calc(96px + max(env(safe-area-inset-bottom), 12px));
   }
 
   /* Sticky HUD container used during gameplay. */

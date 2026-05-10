@@ -14,6 +14,7 @@ export const MODES: ModeMeta[] = [
   { id: "campaign",  nameKey: "mode.campaign",  descriptionKey: "mode.campaign.desc",  icon: "🎯", unlockLevel: 1 },
   { id: "daily",     nameKey: "mode.daily",     descriptionKey: "mode.daily.desc",     icon: "☀",  unlockLevel: 1 },
   { id: "zen",       nameKey: "mode.zen",       descriptionKey: "mode.zen.desc",       icon: "🧘", unlockLevel: 5 },
+  { id: "trail",     nameKey: "mode.trail",     descriptionKey: "mode.trail.desc",     icon: "✨", unlockLevel: 10 },
   { id: "speedrun",  nameKey: "mode.speedrun",  descriptionKey: "mode.speedrun.desc",  icon: "⚡", unlockLevel: 15 },
   { id: "nightmare", nameKey: "mode.nightmare", descriptionKey: "mode.nightmare.desc", icon: "💀", unlockLevel: 75 },
 ];
@@ -69,6 +70,21 @@ export function configureMode(mode: GameMode, baseLevel: number): LevelConfig {
         memorizeMs: cfg.memorizeMs > 0 ? cfg.memorizeMs : 1500,
         targetMs: Math.round(cfg.targetMs * 0.55),
         baseXp: Math.round(cfg.baseXp * 2),
+      };
+    case "trail":
+      // Forces the TRAIL modifier on top of the base level. Drops MEMORIZE
+      // because the trail itself becomes the memory aid, and gives a small
+      // XP bump because the visual flair is satisfying to play.
+      return {
+        ...cfg,
+        modifiers: Array.from(
+          new Set([
+            ...cfg.modifiers.filter((m) => m !== "MEMORIZE"),
+            "TRAIL",
+          ]),
+        ) as LevelConfig["modifiers"],
+        targetMs: Math.round(cfg.targetMs * 1.15),
+        baseXp: Math.round(cfg.baseXp * 1.25),
       };
     case "daily":
     case "campaign":

@@ -19,6 +19,7 @@ const ICONS: Record<Modifier, string> = {
   LIMITED_LIVES: "♥",
   PARTIAL_INVIS: "○",
   FAKE_NUMBERS: "?",
+  TRAIL: "✨",
 };
 
 export function ModifierBadges({ modifiers }: ModifierBadgesProps) {

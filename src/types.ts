@@ -11,7 +11,8 @@ export type Screen =
   | "settings"
   | "profile"
   | "quests"
-  | "leaderboard";
+  | "leaderboard"
+  | "tictactoe";
 
 export type LevelTier = "easy" | "medium" | "hard" | "expert";
 
@@ -27,9 +28,23 @@ export type Modifier =
   | "TIME_PENALTY"
   | "LIMITED_LIVES"
   | "PARTIAL_INVIS"
-  | "FAKE_NUMBERS";
+  | "FAKE_NUMBERS"
+  /**
+   * After each correct tap, the freshly-found tile keeps showing its
+   * shimmering number for a moment so the player can see where they
+   * just were. Recently-tapped tiles fade out gradually, leaving a
+   * "memory trail" across the board.
+   */
+  | "TRAIL";
 
-export type GameMode = "campaign" | "daily" | "zen" | "speedrun" | "nightmare";
+export type GameMode =
+  | "campaign"
+  | "daily"
+  | "zen"
+  | "speedrun"
+  | "nightmare"
+  /** "Echo" — every level reveals a shimmering trail of recent presses. */
+  | "trail";
 
 export interface LevelConfig {
   level: number;
