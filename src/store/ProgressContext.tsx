@@ -15,6 +15,7 @@ import type {
   DailyLoginRecord,
   LeaderboardEntry,
   LevelRecord,
+  MinigameStat,
   PlayerProfile,
   PrestigeData,
   ProgressData,
@@ -101,8 +102,25 @@ const DEFAULT_PROGRESS: ProgressData = {
   leaderboard: [],
   profile: defaultProfile(),
   redeemedCodes: [],
+  minigames: {},
   v: SCHEMA_VERSION,
 };
+
+/** Game ids that are allowed to write minigame stats. */
+const MINIGAME_IDS: readonly string[] = [
+  "tictactoe",
+  "blackjack",
+  "g2048",
+  "memory",
+  "sudoku",
+  "slide",
+  "mines",
+  "lights",
+  "math",
+  "simon",
+  "reaction",
+  "connect4",
+];
 
 function clampInt(n: unknown, min: number, max: number, fallback: number): number {
   if (typeof n !== "number" || !Number.isFinite(n)) return fallback;
@@ -263,6 +281,21 @@ function validate(raw: unknown): ProgressData {
       )
     : [];
 
+  // Mini-game stats
+  const validMinigameIds = new Set(MINIGAME_IDS);
+  const minigames: Record<string, MinigameStat> = {};
+  if (r.minigames && typeof r.minigames === "object") {
+    for (const [k, v] of Object.entries(r.minigames as Record<string, unknown>)) {
+      if (!validMinigameIds.has(k)) continue;
+      const m = (v ?? {}) as Partial<MinigameStat>;
+      minigames[k] = {
+        plays: clampInt(m.plays, 0, 1e6, 0),
+        wins: clampInt(m.wins, 0, 1e6, 0),
+        bestScore: clampInt(m.bestScore, 0, 1e9, 0),
+      };
+    }
+  }
+
   // Profile
   const pr = (r.profile ?? {}) as Partial<PlayerProfile>;
   const profile: PlayerProfile = {
@@ -291,6 +324,7 @@ function validate(raw: unknown): ProgressData {
     leaderboard,
     profile,
     redeemedCodes,
+    minigames,
     v: SCHEMA_VERSION,
   };
 }
@@ -309,6 +343,7 @@ function cloneDefault(): ProgressData {
     leaderboard: [],
     mistakeHeatmap: new Array(HEATMAP_LEN).fill(0),
     redeemedCodes: [],
+    minigames: {},
   };
 }
 
@@ -338,6 +373,22 @@ interface ProgressContextValue {
   claimDailyLogin: () => number;
   redeemPromoCode: (input: string) => RedeemPromoResult;
   setProgress: (next: ProgressData) => void;
+  /**
+   * Generic XP grant — used by the mini-games (tic-tac-toe, blackjack) to
+   * reward wins. Multiplied by the player's prestige XP buff so it stays
+   * consistent with the campaign's reward formula.
+   */
+  awardXp: (amount: number) => number;
+  /**
+   * Persist a single mini-game outcome — increments plays/wins counters
+   * and lifts the stored bestScore if a higher score was achieved. The
+   * `score` semantic is per-game ("higher is better"); games normalise
+   * inverted metrics (e.g. fewer moves) before passing them in.
+   */
+  recordMinigame: (
+    id: string,
+    patch: { won?: boolean; score?: number },
+  ) => void;
 }
 
 const ProgressContext = createContext<ProgressContextValue | null>(null);
@@ -713,6 +764,38 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
     setProgressState({ ...validate(next) });
   }, []);
 
+  const awardXp = useCallback<ProgressContextValue["awardXp"]>((amount) => {
+    if (!Number.isFinite(amount) || amount <= 0) return 0;
+    let granted = 0;
+    setProgressState((prev) => {
+      granted = Math.max(1, Math.round(amount * prev.prestige.xpMultiplier));
+      return { ...prev, xp: prev.xp + granted };
+    });
+    return granted;
+  }, []);
+
+  const recordMinigame = useCallback<ProgressContextValue["recordMinigame"]>(
+    (id, { won = false, score }) => {
+      if (!MINIGAME_IDS.includes(id)) return;
+      setProgressState((prev) => {
+        const cur = prev.minigames[id] ?? { plays: 0, wins: 0, bestScore: 0 };
+        const next: MinigameStat = {
+          plays: cur.plays + 1,
+          wins: cur.wins + (won ? 1 : 0),
+          bestScore:
+            typeof score === "number" && Number.isFinite(score)
+              ? Math.max(cur.bestScore, Math.max(0, Math.round(score)))
+              : cur.bestScore,
+        };
+        return {
+          ...prev,
+          minigames: { ...prev.minigames, [id]: next },
+        };
+      });
+    },
+    [],
+  );
+
   const value = useMemo<ProgressContextValue>(
     () => ({
       progress,
@@ -727,6 +810,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       claimDailyLogin,
       redeemPromoCode,
       setProgress,
+      awardXp,
+      recordMinigame,
     }),
     [
       progress,
@@ -741,6 +826,8 @@ export function ProgressProvider({ children }: { children: ReactNode }) {
       claimDailyLogin,
       redeemPromoCode,
       setProgress,
+      awardXp,
+      recordMinigame,
     ],
   );
 

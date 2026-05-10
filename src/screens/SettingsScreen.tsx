@@ -1,11 +1,12 @@
 import { useState } from "react";
 import { useSettings } from "../store/SettingsContext";
 import { useProgress } from "../store/ProgressContext";
-import { LANGUAGE_OPTIONS } from "../i18n";
+import { LANGUAGE_OPTIONS, type TranslationKey } from "../i18n";
 import { ConfirmDialog } from "../components/ConfirmDialog";
 import type { ColorblindMode, Language, TextScale, ThemeId } from "../types";
 import { THEME_LIST, isThemeUnlocked } from "../features/themes/themesConfig";
 import { COLORBLIND_LABELS, TEXT_SCALE_LABELS } from "../features/themes/accessibility";
+import { MINIGAMES } from "../features/minigames/registry";
 import {
   buildExportText,
   copyToClipboard,
@@ -122,6 +123,27 @@ export function SettingsScreen() {
           value={settings.difficultyAssist}
           onChange={(v) => setSettings({ difficultyAssist: v })}
         />
+      </section>
+
+      {/* Mini-games — show / hide cards on the main menu */}
+      <section className="glass rounded-3xl p-5">
+        <div className="text-sm font-semibold text-white/80 mb-1">
+          {t("settings.minigames")}
+        </div>
+        <div className="text-xs text-white/55 mb-2">
+          {t("settings.minigames_help")}
+        </div>
+        <div className="divide-y divide-white/5">
+          {MINIGAMES.map((m) => (
+            <ToggleRow
+              key={m.id}
+              label={t(m.nameKey as TranslationKey)}
+              description={t(m.subtitleKey as TranslationKey)}
+              value={settings[m.settingKey] as boolean}
+              onChange={(v) => setSettings({ [m.settingKey]: v })}
+            />
+          ))}
+        </div>
       </section>
 
       {/* Theme */}

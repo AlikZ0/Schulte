@@ -38,6 +38,18 @@ const DEFAULT_SETTINGS: SettingsData = {
   highContrast: false,
   textScale: "md",
   leftHanded: false,
+  showTicTacToe: true,
+  showBlackjack: true,
+  show2048: true,
+  showMemory: true,
+  showSudoku: true,
+  showSlide: true,
+  showMines: true,
+  showLights: true,
+  showMath: true,
+  showSimon: true,
+  showReaction: true,
+  showConnect4: true,
   v: SCHEMA_VERSION,
 };
 
@@ -82,6 +94,20 @@ function validate(raw: unknown): SettingsData {
     highContrast: typeof r.highContrast === "boolean" ? r.highContrast : false,
     textScale: pick<TextScale>(r.textScale, ["sm", "md", "lg", "xl"], "md"),
     leftHanded: typeof r.leftHanded === "boolean" ? r.leftHanded : false,
+    showTicTacToe:
+      typeof r.showTicTacToe === "boolean" ? r.showTicTacToe : true,
+    showBlackjack:
+      typeof r.showBlackjack === "boolean" ? r.showBlackjack : true,
+    show2048: typeof r.show2048 === "boolean" ? r.show2048 : true,
+    showMemory: typeof r.showMemory === "boolean" ? r.showMemory : true,
+    showSudoku: typeof r.showSudoku === "boolean" ? r.showSudoku : true,
+    showSlide: typeof r.showSlide === "boolean" ? r.showSlide : true,
+    showMines: typeof r.showMines === "boolean" ? r.showMines : true,
+    showLights: typeof r.showLights === "boolean" ? r.showLights : true,
+    showMath: typeof r.showMath === "boolean" ? r.showMath : true,
+    showSimon: typeof r.showSimon === "boolean" ? r.showSimon : true,
+    showReaction: typeof r.showReaction === "boolean" ? r.showReaction : true,
+    showConnect4: typeof r.showConnect4 === "boolean" ? r.showConnect4 : true,
     v: SCHEMA_VERSION,
   };
 }

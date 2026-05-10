@@ -5,6 +5,7 @@ import { rankFor } from "../utils/ranks";
 import { TOTAL_LEVELS } from "../utils/levels";
 import { recommendLevel, focusScore } from "../utils/dynamicDifficulty";
 import { MODES, isModeUnlocked } from "../features/modes/modes";
+import { MINIGAMES } from "../features/minigames/registry";
 import { gradientById, initialsFor } from "../features/profile/avatars";
 import { XpBar } from "../components/XpBar";
 import { formatTimeShort } from "../utils/formatTime";
@@ -17,7 +18,7 @@ interface MainMenuProps {
 
 export function MainMenu({ onNavigate, onPlay }: MainMenuProps) {
   const { progress } = useProgress();
-  const { t } = useSettings();
+  const { settings, t } = useSettings();
   const { rank } = rankFor(progress.xp);
 
   const continueLevel = Math.min(progress.highestUnlockedLevel, TOTAL_LEVELS);
@@ -186,23 +187,61 @@ export function MainMenu({ onNavigate, onPlay }: MainMenuProps) {
           </div>
         </button>
 
-        <button
-          type="button"
-          onClick={() => onNavigate("tictactoe")}
-          className="glass rounded-2xl p-4 text-left hover:-translate-y-0.5 hover:shadow-glow transition-all"
-        >
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-gradient-to-br from-fuchsia-400 to-pink-500 grid place-items-center text-bg font-bold shadow-soft">
-              ✕
-            </div>
-            <div className="flex-1">
-              <div className="font-bold">{t("menu.tictactoe")}</div>
-              <div className="text-xs text-white/55">
-                {t("tictactoe.subtitle")}
+        {/* All registered mini-games — TicTacToe / Blackjack / 2048 / etc. */}
+        {MINIGAMES.filter((m) => settings[m.settingKey]).map((m) => {
+          const stat = progress.minigames[m.id];
+          // Pick the most-meaningful badge: best score > wins > nothing.
+          let badge: string | null = null;
+          if (stat) {
+            if (stat.bestScore > 0) {
+              badge = `${t("common.best")} ${stat.bestScore}`;
+            } else if (stat.wins > 0) {
+              badge = `${stat.wins} W`;
+            }
+          }
+          return (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => onNavigate(m.id)}
+              className="glass rounded-2xl p-4 text-left hover:-translate-y-0.5 hover:shadow-glow transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <div
+                  className={[
+                    "h-10 w-10 rounded-xl grid place-items-center text-bg font-bold shadow-soft",
+                    "bg-gradient-to-br",
+                    m.gradient,
+                  ].join(" ")}
+                >
+                  <span
+                    className={[
+                      "leading-none",
+                      m.icon.length >= 3 ? "text-[10px] tracking-tighter" : "text-base",
+                    ].join(" ")}
+                  >
+                    {m.icon}
+                  </span>
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2">
+                    <div className="font-bold truncate">
+                      {t(m.nameKey as TranslationKey)}
+                    </div>
+                    {badge && (
+                      <span className="chip text-[10px] py-0 shrink-0 bg-black/20 border-white/10 tabular-nums">
+                        {badge}
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs text-white/55 truncate">
+                    {t(m.subtitleKey as TranslationKey)}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-        </button>
+            </button>
+          );
+        })}
       </section>
 
       <p className="text-xs text-white/45 text-center">{t("menu.tagline")}</p>

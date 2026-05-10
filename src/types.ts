@@ -12,7 +12,18 @@ export type Screen =
   | "profile"
   | "quests"
   | "leaderboard"
-  | "tictactoe";
+  | "tictactoe"
+  | "blackjack"
+  | "g2048"
+  | "memory"
+  | "sudoku"
+  | "slide"
+  | "mines"
+  | "lights"
+  | "math"
+  | "simon"
+  | "reaction"
+  | "connect4";
 
 export type LevelTier = "easy" | "medium" | "hard" | "expert";
 
@@ -177,6 +188,18 @@ export interface LeaderboardEntry {
   name?: string;
 }
 
+/**
+ * Per-mini-game persisted stats — total plays, wins and a single
+ * "personal best" score whose semantic depends on the game (e.g. for
+ * 2048 it's the in-game points; for Reaction it's `1000 - avgMs` so
+ * higher is always better).
+ */
+export interface MinigameStat {
+  plays: number;
+  wins: number;
+  bestScore: number;
+}
+
 export interface ProgressData {
   highestUnlockedLevel: number;
   xp: number;
@@ -203,6 +226,8 @@ export interface ProgressData {
   profile: PlayerProfile;
   /** Promo code ids that have already been redeemed (one-shot per device). */
   redeemedCodes: string[];
+  /** Per-mini-game stats keyed by registry id (tictactoe / blackjack / ...). */
+  minigames: Record<string, MinigameStat>;
   /** Schema version for future migrations. */
   v: number;
 }
@@ -229,6 +254,19 @@ export interface SettingsData {
   highContrast: boolean;
   textScale: TextScale;
   leftHanded: boolean;
+  /* Mini-game visibility flags — toggleable from Settings → Mini-games. */
+  showTicTacToe: boolean;
+  showBlackjack: boolean;
+  show2048: boolean;
+  showMemory: boolean;
+  showSudoku: boolean;
+  showSlide: boolean;
+  showMines: boolean;
+  showLights: boolean;
+  showMath: boolean;
+  showSimon: boolean;
+  showReaction: boolean;
+  showConnect4: boolean;
   v: number;
 }
 

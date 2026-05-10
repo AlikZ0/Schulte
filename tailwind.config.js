@@ -53,6 +53,7 @@ export default {
         "tile-shimmer": "tileShimmer 1.8s ease-in-out infinite",
         "ripple": "ripple 0.55s ease-out both",
         "confetti": "confettiFall 1.2s cubic-bezier(.25,1,.5,1) forwards",
+        "card-deal": "cardDeal 0.45s cubic-bezier(.21,.93,.34,1) both",
       },
       keyframes: {
         fadeIn: {
@@ -109,6 +110,20 @@ export default {
         tileShimmer: {
           "0%,100%": { filter: "brightness(1.05)", letterSpacing: "0em" },
           "50%": { filter: "brightness(1.55)", letterSpacing: "0.04em" },
+        },
+        cardDeal: {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(-24px) translateX(40px) rotate(-12deg) scale(0.85)",
+          },
+          "70%": {
+            opacity: "1",
+            transform: "translateY(2px) translateX(0) rotate(2deg) scale(1.02)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0) translateX(0) rotate(0) scale(1)",
+          },
         },
         ripple: {
           "0%": { transform: "scale(0.4)", opacity: "0.45" },

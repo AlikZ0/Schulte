@@ -7,7 +7,10 @@ interface AchievementToastProps {
 
 export function AchievementToast({ toasts, onDismiss }: AchievementToastProps) {
   return (
-    <div className="fixed top-4 right-4 z-[60] flex flex-col gap-2 max-w-[92vw] sm:max-w-sm">
+    <div
+      className="fixed right-4 z-[60] flex flex-col gap-2 max-w-[92vw] sm:max-w-sm"
+      style={{ top: "calc(max(env(safe-area-inset-top), 44px) + 8px)" }}
+    >
       {toasts.map((t) => (
         <button
           key={t.id}

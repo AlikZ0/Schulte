@@ -1,9 +1,15 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import { useSettings } from "../store/SettingsContext";
+import { useProgress } from "../store/ProgressContext";
 import { useSound } from "../hooks/useSound";
 import { useHaptics } from "../hooks/useHaptics";
+import { Confetti } from "../components/Confetti";
 import type { TranslationKey } from "../i18n";
+
+/* XP awarded for each mini-game outcome — small but meaningful. */
+const XP_WIN = 30;
+const XP_DRAW = 5;
 
 type Cell = "X" | "O" | null;
 type Player = "X" | "O";
@@ -67,6 +73,7 @@ interface TicTacToeScreenProps {
 
 export function TicTacToeScreen({ onExit }: TicTacToeScreenProps) {
   const { settings, t } = useSettings();
+  const { awardXp, recordMinigame } = useProgress();
   const { play } = useSound(settings.sound);
   const haptic = useHaptics(settings.haptics);
 
@@ -74,6 +81,8 @@ export function TicTacToeScreen({ onExit }: TicTacToeScreenProps) {
   const [turn, setTurn] = useState<Player>("X");
   const [score, setScore] = useState({ wins: 0, losses: 0, draws: 0 });
   const [first, setFirst] = useState<Player>("X");
+  const [lastXp, setLastXp] = useState<number | null>(null);
+  const [confettiTick, setConfettiTick] = useState(0);
 
   const aiTimeoutRef = useRef<number | null>(null);
 
@@ -98,6 +107,8 @@ export function TicTacToeScreen({ onExit }: TicTacToeScreenProps) {
       setBoard(Array(9).fill(null) as Cell[]);
       setTurn(firstPlayer);
       setFirst(firstPlayer);
+      setLastXp(null);
+      lastStatusRef.current = "playing";
     },
     [],
   );
@@ -158,18 +169,27 @@ export function TicTacToeScreen({ onExit }: TicTacToeScreenProps) {
     lastStatusRef.current = status;
     if (status === "won") {
       setScore((s) => ({ ...s, wins: s.wins + 1 }));
+      const granted = awardXp(XP_WIN);
+      if (granted > 0) setLastXp(granted);
+      recordMinigame("tictactoe", { won: true, score: 1 });
+      setConfettiTick((c) => c + 1);
       play("complete");
       haptic("success");
     } else if (status === "lost") {
       setScore((s) => ({ ...s, losses: s.losses + 1 }));
+      setLastXp(null);
+      recordMinigame("tictactoe", { won: false });
       play("fail");
       haptic("error");
     } else if (status === "draw") {
       setScore((s) => ({ ...s, draws: s.draws + 1 }));
+      const granted = awardXp(XP_DRAW);
+      if (granted > 0) setLastXp(granted);
+      recordMinigame("tictactoe", { won: false });
       play("click");
       haptic("warning");
     }
-  }, [status, play, haptic]);
+  }, [status, play, haptic, awardXp, recordMinigame]);
 
   /* ── Cleanup on unmount ─────────────────────────────────────────────── */
 
@@ -247,6 +267,11 @@ export function TicTacToeScreen({ onExit }: TicTacToeScreenProps) {
       {/* Status */}
       <div className="glass rounded-2xl px-4 py-3 text-center">
         <div className="text-sm font-semibold">{statusText}</div>
+        {lastXp != null && status !== "playing" && (
+          <div className="mt-1 text-xs text-accent-neon font-semibold animate-fade-in">
+            +{lastXp} XP
+          </div>
+        )}
       </div>
 
       {/* Board */}
@@ -314,6 +339,7 @@ export function TicTacToeScreen({ onExit }: TicTacToeScreenProps) {
       <p className="text-xs text-white/45 text-center">
         {t("tictactoe.tip" as TranslationKey)}
       </p>
+      <Confetti ticks={confettiTick} enabled={settings.animations} />
     </main>
   );
 }

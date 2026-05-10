@@ -41,7 +41,7 @@ export function InstallPrompt() {
   return (
     <div
       className="fixed left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-3 py-2 rounded-2xl glass shadow-glow animate-rise"
-      style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 88px)" }}
+      style={{ bottom: "calc(var(--bottom-nav-height, 88px) + 16px)" }}
     >
       <button
         type="button"

@@ -235,36 +235,61 @@ body {
   }
 
   /*
-   * Use this class on every screen's top-level <main>. It keeps the page
-   * title and first card from sliding under the device status bar / Dynamic
-   * Island / browser URL bar — even on Android Chrome where
-   * env(safe-area-inset-top) often reports 0. The 44 px floor is enough
-   * to fully clear typical mobile status bars (24–44 px) and matches the
-   * iOS-safe minimum tap target so the layout feels right even when the
-   * page is launched as a PWA without a top header.
+   * Fixed top mask that physically covers the system status-bar region.
+   * Without this, when the user scrolls the page, content slides UP
+   * behind the system status bar and looks like the buttons/text are
+   * stamped on top of the clock and battery icons. The mask is the same
+   * height as .has-top-safe's reserved space, uses the page background
+   * with a subtle blur, and sits below modals/toasts but above page
+   * content via z-index.
    */
-  .has-top-safe {
-    padding-top: max(env(safe-area-inset-top), 44px);
+  .top-safe-mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: max(env(safe-area-inset-top), 44px);
+    z-index: 35;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      var(--bg) 0%,
+      var(--bg) 55%,
+      transparent 100%
+    );
+    -webkit-backdrop-filter: blur(10px) saturate(1.05);
+    backdrop-filter: blur(10px) saturate(1.05);
   }
 
   /*
-   * The fixed bottom nav measures itself in JS (BottomNav.tsx) and writes
-   * its real, layout-correct height to --bottom-nav-height on <html>.
-   * Every screen consumes that variable so the last card is always fully
-   * scrollable above the nav — on iPhones with a home-indicator bar, on
-   * Android phones with gesture nav, in browsers with mobile emulation,
-   * and with accessibility text scaling turned up.
+   * Symmetric bottom mask. The bottom nav is a floating glass card that
+   * leaves transparent gaps on its left/right and a small notch above it.
+   * Without a mask, page content visibly slides BEHIND those gaps when
+   * the user scrolls — the nav looks like it's hovering on top of the
+   * cards. This filled gradient fades the page background up into the
+   * nav area, so even when content does end up visually underneath the
+   * nav row, it dissolves cleanly into bg colour.
    *
-   * We add a +40 px buffer so the last card visually clears the nav with
-   * comfortable breathing room rather than touching its top edge, AND we
-   * take max() with a static safety floor so even if something blocks
-   * the JS measurement we never under-pad.
+   * Sits at z-39 — above the page (z-0) and the top-safe-mask (z-35)
+   * but BELOW the nav itself (z-40), so the nav buttons stay visible
+   * and tappable.
    */
-  .has-bottom-nav {
-    padding-bottom: max(
-      calc(var(--bottom-nav-height) + 40px),
-      calc(150px + env(safe-area-inset-bottom, 0px))
+  .bottom-safe-mask {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: calc(var(--bottom-nav-height) + 12px);
+    z-index: 39;
+    pointer-events: none;
+    background: linear-gradient(
+      0deg,
+      var(--bg) 0%,
+      var(--bg) 55%,
+      transparent 100%
     );
+    -webkit-backdrop-filter: blur(8px) saturate(1.05);
+    backdrop-filter: blur(8px) saturate(1.05);
   }
 
   /* Sticky HUD container used during gameplay. */
@@ -298,4 +323,25 @@ body {
 }
 .tile-base.ripple-active::after {
   animation: ripple 0.55s ease-out 1;
+}
+
+/* ──────────────────────────────────────────────────────────────────────────
+   Layout-padding utilities — kept OUTSIDE every @layer so they always win
+   over Tailwind's `pb-*` / `pt-*` utilities that might be applied to the
+   same element. Without this, `<main className="pb-5 has-bottom-nav">`
+   would silently use `pb-5` (≈20 px) instead of our dynamic, nav-aware
+   padding, and the last card on the page would slide under the nav.
+   The `!important` is a belt-and-braces: even if someone later moves
+   these into a layer, a same-specificity utility cannot override them.
+   ──────────────────────────────────────────────────────────────────────── */
+
+.has-top-safe {
+  padding-top: max(env(safe-area-inset-top), 44px) !important;
+}
+
+.has-bottom-nav {
+  padding-bottom: max(
+    calc(var(--bottom-nav-height) + 40px),
+    calc(150px + env(safe-area-inset-bottom, 0px))
+  ) !important;
 }
